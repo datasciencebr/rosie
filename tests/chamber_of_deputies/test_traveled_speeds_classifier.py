@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 import numpy as np
@@ -9,9 +10,11 @@ from rosie.chamber_of_deputies.classifiers.traveled_speeds_classifier import Tra
 
 
 class TestTraveledSpeedsClassifier(TestCase):
-
     def setUp(self):
-        self.dataset = pd.read_csv('rosie/chamber_of_deputies/tests/fixtures/traveled_speeds_classifier.csv',
+        from ..utils import get_fixtures_dir
+        FIXTURES_DIR = get_fixtures_dir(__file__)
+        the_file = os.path.join(FIXTURES_DIR, 'traveled_speeds_classifier.csv')
+        self.dataset = pd.read_csv(the_file,
                                    dtype={'recipient_id': np.str})
         self.subject = TraveledSpeedsClassifier()
         self.subject.fit(self.dataset)
@@ -40,15 +43,18 @@ class TestTraveledSpeedsClassifier(TestCase):
         prediction = self.subject.predict(self.dataset)
         self.assertEqual(1, prediction[9])
 
-    def test_predict_considers_meal_reibursement_without_congressperson_id_an_inlier_even_when_more_than_8_meal_reimbursements(self):
+    def test_predict_considers_meal_reibursement_without_congressperson_id_an_inlier_even_when_more_than_8_meal_reimbursements(
+            self):
         prediction = self.subject.predict(self.dataset)
         self.assertEqual(1, prediction[10])
 
-    def test_predict_considers_meal_reibursement_without_latitude_an_inlier_even_when_more_than_8_meal_reimbursements(self):
+    def test_predict_considers_meal_reibursement_without_latitude_an_inlier_even_when_more_than_8_meal_reimbursements(
+            self):
         prediction = self.subject.predict(self.dataset)
         self.assertEqual(1, prediction[11])
 
-    def test_predict_considers_meal_reibursement_without_longitude_an_inlier_even_when_more_than_8_meal_reimbursements(self):
+    def test_predict_considers_meal_reibursement_without_longitude_an_inlier_even_when_more_than_8_meal_reimbursements(
+            self):
         prediction = self.subject.predict(self.dataset)
         self.assertEqual(1, prediction[12])
 

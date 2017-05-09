@@ -1,0 +1,49 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:ionelmc/cookiecutter-pylibrary project-path
+#
+# See:
+#    https://pypi.python.org/pypi/cookiepatcher
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=project-path/.cookiecutterrc gh:ionelmc/cookiecutter-pylibrary
+
+default_context:
+
+    appveyor:                  'no'
+    c_extension_cython:        'no'
+    c_extension_optional:      'no'
+    c_extension_support:       'no'
+    codacy:                    'no'
+    codeclimate:               'yes'
+    codecov:                   'no'
+    command_line_interface:    'click'
+    command_line_interface_bin_name: 'rosie'
+    coveralls:                 'yes'
+    distribution_name:         'rosie'
+    email:                     'algum@email.com'
+    full_name:                 'Data Science Brigade'
+    github_username:           'datasciencebr'
+    landscape:                 'no'
+    package_name:              'rosie'
+    project_name:              'rosie'
+    project_short_description: 'A Python application reading receipts from the Quota for Exercising Parliamentary Activity (aka CEAP) from the Brazilian Chamber of Deputies and outputs, for each of the receipts, a probability of corruption and a list of reasons why it was considered this way.'
+    release_date:              'today'
+    repo_name:                 'rosie'
+    requiresio:                'no'
+    scrutinizer:               'no'
+    sphinx_doctest:            'no'
+    sphinx_theme:              'sphinx-rtd-theme'
+    test_matrix_configurator:  'yes'
+    test_matrix_separate_coverage: 'no'
+    test_runner:               'pytest'
+    travis:                    'yes'
+    version:                   '0.1.0'
+    website:                   'http://datasciencebr.com/'
+    year:                      'now'

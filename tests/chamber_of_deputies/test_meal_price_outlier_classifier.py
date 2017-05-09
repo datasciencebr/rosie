@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -9,9 +10,11 @@ from rosie.chamber_of_deputies.classifiers.meal_price_outlier_classifier import 
 
 
 class TestMealPriceOutlierClassifier(TestCase):
-
     def setUp(self):
-        self.dataset = pd.read_csv('rosie/chamber_of_deputies/tests/fixtures/meal_price_outlier_classifier.csv',
+        from ..utils import get_fixtures_dir
+        FIXTURES_DIR = get_fixtures_dir(__file__)
+        the_file = os.path.join(FIXTURES_DIR, 'meal_price_outlier_classifier.csv')
+        self.dataset = pd.read_csv(the_file,
                                    dtype={'recipient_id': np.str})
         self.subject = MealPriceOutlierClassifier()
         self.subject.fit(self.dataset)

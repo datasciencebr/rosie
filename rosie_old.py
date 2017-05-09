@@ -1,5 +1,9 @@
+import os
+import sys
 from sys import argv, exit
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(CURRENT_DIR, 'src', 'rosie'))
 
 def entered_command(argv):
     if len(argv) >= 2:
@@ -32,7 +36,7 @@ def run():
 def test():
     import unittest
     loader = unittest.TestLoader()
-    tests = loader.discover('rosie')
+    tests = loader.discover('src')
     testRunner = unittest.runner.TextTestRunner()
     testRunner.run(tests)
 

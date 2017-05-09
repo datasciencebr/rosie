@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 import numpy as np
@@ -7,9 +8,10 @@ from rosie.core.classifiers.invalid_cnpj_cpf_classifier import InvalidCnpjCpfCla
 
 
 class TestInvalidCnpjCpfClassifier(TestCase):
-
     def setUp(self):
-        self.dataset = pd.read_csv('rosie/core/tests/fixtures/invalid_cnpj_cpf_classifier.csv',
+        from ..utils import get_fixtures_dir
+        the_file = os.path.join(get_fixtures_dir(__file__), 'invalid_cnpj_cpf_classifier.csv')
+        self.dataset = pd.read_csv(the_file,
                                    dtype={'recipient_id': np.str})
         self.subject = InvalidCnpjCpfClassifier()
 

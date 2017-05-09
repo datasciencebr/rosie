@@ -11,11 +11,12 @@ from rosie.chamber_of_deputies.adapter import Adapter as subject_class
 from rosie.chamber_of_deputies.adapter import COLUMNS as ADAPTER_COLUMNS
 
 
-class TestAdapter(TestCase):
 
+class TestAdapter(TestCase):
     def setUp(self):
+        from ..utils import get_fixtures_dir
         self.temp_path = mkdtemp()
-        self.fixtures_path = os.path.join('rosie', 'chamber_of_deputies', 'tests', 'fixtures')
+        self.fixtures_path = get_fixtures_dir(__file__)
         copies = (
             ('companies.xz', subject_class.COMPANIES_DATASET),
             ('reimbursements.xz', 'reimbursements.xz')
