@@ -51,7 +51,9 @@ class Core:
         if classifier.__name__ == 'MonthlySubquotaLimitClassifier':
             model = classifier()
             model.fit(self.dataset)
-
+        elif classifier.__name__ == 'MealGeneralizationClassifier':
+            model = classifier()
+            model.fit('rosie/chamber_of_deputies/classifiers/keras/model/weights.hdf5')
         else:
             if os.path.isfile(path):
                 model = joblib.load(path)

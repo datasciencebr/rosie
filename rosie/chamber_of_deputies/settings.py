@@ -3,9 +3,12 @@ from rosie.chamber_of_deputies.classifiers.irregular_companies_classifier import
 from rosie.chamber_of_deputies.classifiers.meal_price_outlier_classifier import MealPriceOutlierClassifier
 from rosie.chamber_of_deputies.classifiers.monthly_subquota_limit_classifier import MonthlySubquotaLimitClassifier
 from rosie.chamber_of_deputies.classifiers.traveled_speeds_classifier import TraveledSpeedsClassifier
+from rosie.chamber_of_deputies.classifiers.reimbursement_generalization import MealGeneralizationClassifier
 from rosie.core.classifiers.invalid_cnpj_cpf_classifier import InvalidCnpjCpfClassifier
 
+
 CLASSIFIERS = {
+    'reimbursement_generalization': MealGeneralizationClassifier,
     'meal_price_outlier': MealPriceOutlierClassifier,
     'over_monthly_subquota_limit': MonthlySubquotaLimitClassifier,
     'suspicious_traveled_speed_day': TraveledSpeedsClassifier,
