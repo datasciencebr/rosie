@@ -41,7 +41,7 @@ class MealGeneralizationClassifier(TransformerMixin):
             'category',
             'year']
 
-    folder = 'rosie/chamber_of_deputies/classifiers/keras/images/'
+    folder =''
     img_width, img_height = 300, 300
 
     def train(self,train_data_dir,validation_data_dir,save_dir):
@@ -138,6 +138,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         self._X = self.__document_url(self._X)
         self._X['y']=False
         result=[]
+        fd, self.folder = mkstemp()
         for index, item in self._X.iterrows():
 
             pdf_name = self.__download_doc(item.link)
