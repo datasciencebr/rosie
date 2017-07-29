@@ -143,8 +143,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         self.folder = self.folder+'/'
         for index, item in self._X.iterrows():
 
-            pdf_name = self.__download_doc(item.link)
-            png_name = self.__convert_pdf_png(pdf_name)
+            png_name = self.__download_doc(item.link)
             if png_name is not None :
                 img = load_img(self.folder+png_name,False,target_size=(self.img_width,self.img_height))#read a image
                 x = img_to_array(img)
@@ -167,6 +166,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         return (X['category'] == 'Meal')
 
     def __convert_pdf_png(self,item):
+        
         try:
             full_name = item.split("/")
             file_name = full_name[len(full_name)-1]
@@ -195,17 +195,16 @@ class MealGeneralizationClassifier(TransformerMixin):
             Exception -- returns None
             """
             #using the doc id as file name
-            full_name= url_link.split("/")
-            file_name = full_name[len(full_name)-1]
             try:
-
+                full_name= url_link.split("/")
+                file_name = full_name[len(full_name)-1]
                 #open the resquest and get the file
                 with urllib.request.urlopen(url_link) as response, open(self.folder+file_name, 'wb') as out_file:
                     data = response.read()
                     #write the file on disk
                     out_file.write(data)
-                    # return the name
-                    return out_file.name
+                    # return the name of the pdf converted to png
+                    return self.__convert_pdf_png(out_file.name)
             except Exception as ex:
                 print(ex)
                 return None #case we get some exception we return None
