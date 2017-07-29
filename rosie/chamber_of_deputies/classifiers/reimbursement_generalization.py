@@ -140,6 +140,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         self._X['y']=False
         result=[]
         fd, self.folder = mkstemp()
+        self.folder = self.folder+'/'
         for index, item in self._X.iterrows():
 
             pdf_name = self.__download_doc(item.link)
