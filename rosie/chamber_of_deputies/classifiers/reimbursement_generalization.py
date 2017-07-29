@@ -141,6 +141,9 @@ class MealGeneralizationClassifier(TransformerMixin):
         result=[]
         fd, self.folder = mkstemp()
         self.folder = self.folder+'/'
+        if not os.path.exists(self.folder):
+                os.makedirs(self.folder)
+                
         for index, item in self._X.iterrows():
 
             png_name = self.__download_doc(item.link)
@@ -160,6 +163,7 @@ class MealGeneralizationClassifier(TransformerMixin):
             self.__clear_downloaded()
 
         self._X['y']=result
+        os.removedirs(self.folder)
         return self._X['y']
 
     def __applicable_rows(self, X):
@@ -181,6 +185,7 @@ class MealGeneralizationClassifier(TransformerMixin):
                     converted.save(filename=self.folder+file_name)
                     return file_name
         except Exception as ex:
+                  print("Error during pdf conversion")
                   print(ex)
                   return None
 
@@ -206,6 +211,7 @@ class MealGeneralizationClassifier(TransformerMixin):
                     # return the name of the pdf converted to png
                     return self.__convert_pdf_png(out_file.name)
             except Exception as ex:
+                print("Error during pdf download")
                 print(ex)
                 return None #case we get some exception we return None
 
