@@ -141,9 +141,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         result=[]
         fd, self.folder = mkstemp()
         self.folder = self.folder+'/'
-        if not os.path.exists(self.folder):
-                os.makedirs(self.folder)
-                
+               
         for index, item in self._X.iterrows():
 
             png_name = self.__download_doc(item.link)
@@ -163,7 +161,6 @@ class MealGeneralizationClassifier(TransformerMixin):
             self.__clear_downloaded()
 
         self._X['y']=result
-        os.removedirs(self.folder)
         return self._X['y']
 
     def __applicable_rows(self, X):
