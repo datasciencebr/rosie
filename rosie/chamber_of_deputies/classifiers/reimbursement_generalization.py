@@ -3,6 +3,7 @@ import unicodedata
 import numpy as np
 import pandas as pd
 import urllib
+import glob
 from sklearn.base import TransformerMixin
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -141,7 +142,7 @@ class MealGeneralizationClassifier(TransformerMixin):
 
             pdf_name = self.__download_doc(item.link)
             png_name = self.__convert_pdf_png(pdf_name)
-            if png_name != None :
+            if png_name is not None :
                 img = load_img(self.folder+png_name,False,target_size=(self.img_width,self.img_height))#read a image
                 x = img_to_array(img)
                 x = np.expand_dims(x, axis=0)
@@ -152,10 +153,9 @@ class MealGeneralizationClassifier(TransformerMixin):
                     result.append(True)
                 else:
                     result.append(False)
-                self.__clear_downloaded(self.folder+png_name)
-                self.__clear_downloaded(pdf_name)
             else:
                 result.append(False)
+            self.__clear_downloaded()
 
         self._X['y']=result
         return self._X['y']
@@ -222,5 +222,10 @@ class MealGeneralizationClassifier(TransformerMixin):
         X['link']=links
         return X
 
-    def __clear_downloaded(self,file):
-        os.remove(file,dir_fd=None)
+    def __clear_downloaded(self):
+        pdfs = glob.glob(self.folder+'*.pdf')
+        for file in pdfs:
+            os.remove(file,dir_fd=None)
+        png = glob.glob(self.folder+'*.png')
+        for file in png:
+            os.remove(file,dir_fd=None)
