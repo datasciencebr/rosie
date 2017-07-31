@@ -42,7 +42,7 @@ class MealGeneralizationClassifier(TransformerMixin):
             'category',
             'year']
 
-    folder =''
+
     img_width, img_height = 300, 300
 
     def train(self,train_data_dir,validation_data_dir,save_dir):
@@ -139,16 +139,12 @@ class MealGeneralizationClassifier(TransformerMixin):
         self._X = self.__document_url(self._X)
         self._X['y']=False
         result=[]
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            self.folder  = tmpdirname
-        self.folder=self.folder+'/'
 
         for index, item in self._X.iterrows():
 
-            png_name = self.__download_doc(item.link)
-            if png_name is not None :
-                img = load_img(self.folder+png_name,False,target_size=(self.img_width,self.img_height))#read a image
-                x = img_to_array(img)
+            png_image = self.__download_doc(item.link)
+            if png_image is not None :
+                x = img_to_array(png_image)
                 x = np.expand_dims(x, axis=0)
 
                 preds = self.keras_model.predict_classes(x, verbose=0) #predict it in our model :D
@@ -159,7 +155,6 @@ class MealGeneralizationClassifier(TransformerMixin):
                     result.append(False)
             else:
                 result.append(False)
-            self.__clear_downloaded()
 
         self._X['y']=result
         return self._X['y']
@@ -170,18 +165,16 @@ class MealGeneralizationClassifier(TransformerMixin):
     def __convert_pdf_png(self,item):
 
         try:
-            full_name = item.split("/")
-            file_name = full_name[len(full_name)-1]
-            file_name= file_name.split(".pdf")
-            file_name= file_name[0]
-            file_name= file_name+".png"
             #Default arguments to read the file and has a good resolution
-            with Image(filename=item, resolution=300) as img:
+            with Image(filename=item.name, resolution=300) as img:
                 img.compression_quality = 99
                 #Format choosed to convert the pdf to image
                 with img.convert('png') as converted:
-                    converted.save(filename=self.folder+file_name)
-                    return file_name
+                    f = tempfile.NamedTemporaryFile()
+                    converted.save(filename=f.name)
+                    img = load_img(f.name,False,target_size=(self.img_width,self.img_height))#read a image
+                    f.close()
+                    return img
         except Exception as ex:
                 print("Error during pdf conversion")
                 print(ex)
@@ -202,12 +195,15 @@ class MealGeneralizationClassifier(TransformerMixin):
                 full_name= url_link.split("/")
                 file_name = full_name[len(full_name)-1]
                 #open the resquest and get the file
-                with urllib.request.urlopen(url_link) as response, open(self.folder+file_name, 'wb') as out_file:
+                with urllib.request.urlopen(url_link) as response:
                     data = response.read()
                     #write the file on disk
-                    out_file.write(data)
+                    f = tempfile.NamedTemporaryFile()
+                    f.write(data)
                     # return the name of the pdf converted to png
-                    return self.__convert_pdf_png(out_file.name)
+                    img = self.__convert_pdf_png(f)
+                    f.close()
+                    return img
             except Exception as ex:
                 print("Error during pdf download")
                 print(ex)
@@ -227,11 +223,3 @@ class MealGeneralizationClassifier(TransformerMixin):
             links.append('http://www.camara.gov.br/cota-parlamentar/documentos/publ/{}/{}/{}.pdf'.format(x.applicant_id,x.year, x.document_id))
         X['link']=links
         return X
-
-    def __clear_downloaded(self):
-        pdfs = glob.glob(self.folder+'*.pdf')
-        for file in pdfs:
-            os.remove(file,dir_fd=None)
-        png = glob.glob(self.folder+'*.png')
-        for file in png:
-            os.remove(file,dir_fd=None)
