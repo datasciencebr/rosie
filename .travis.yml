@@ -2,8 +2,8 @@ dist: trusty
 language: python
 python: 3.6
 cache: pip
-directories:
-  - tmp
+services:
+  - memcached
 install:
   - ./setup
   - pip install coveralls
