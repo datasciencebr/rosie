@@ -140,7 +140,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         self._X['y']=False
         result=[]
         self.folder = mkdtemp()
-               
+        self.folder = self.folder + '/'       
         for index, item in self._X.iterrows():
 
             png_name = self.__download_doc(item.link)
