@@ -1,6 +1,6 @@
 import os
 import unicodedata
-from tempfile import mkstemp
+from tempfile import mkdtemp
 import numpy as np
 import pandas as pd
 import urllib
