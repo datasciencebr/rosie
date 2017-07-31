@@ -198,11 +198,11 @@ class MealGeneralizationClassifier(TransformerMixin):
                 with urllib.request.urlopen(url_link) as response:
                     data = response.read()
                     #write the file on disk
-                    f = tempfile.NamedTemporaryFile()
+                    f = tempfile.NamedTemporaryFile(delete=False)
                     f.write(data)
                     # return the name of the pdf converted to png
                     img = self.__convert_pdf_png(f)
-                    f.close()
+                    os.unlink(f.name)
                     return img
             except Exception as ex:
                 print("Error during pdf download")
