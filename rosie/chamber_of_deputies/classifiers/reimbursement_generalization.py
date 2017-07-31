@@ -1,6 +1,6 @@
 import os
 import unicodedata
-from tempfile import mkdtemp
+import tempfile
 import numpy as np
 import pandas as pd
 import urllib
@@ -139,8 +139,10 @@ class MealGeneralizationClassifier(TransformerMixin):
         self._X = self.__document_url(self._X)
         self._X['y']=False
         result=[]
-        self.folder = mkdtemp()
-        self.folder = self.folder + '/'       
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            self.folder  = tmpdirname
+        self.folder=self.folder+'/'
+
         for index, item in self._X.iterrows():
 
             png_name = self.__download_doc(item.link)
@@ -166,7 +168,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         return (X['category'] == 'Meal')
 
     def __convert_pdf_png(self,item):
-        
+
         try:
             full_name = item.split("/")
             file_name = full_name[len(full_name)-1]
@@ -181,9 +183,9 @@ class MealGeneralizationClassifier(TransformerMixin):
                     converted.save(filename=self.folder+file_name)
                     return file_name
         except Exception as ex:
-                  print("Error during pdf conversion")
-                  print(ex)
-                  return None
+                print("Error during pdf conversion")
+                print(ex)
+                return None
 
     def __download_doc(self,url_link):
             """Download a pdf file to a specified directory
