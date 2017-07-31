@@ -139,7 +139,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         self._X = self.__document_url(self._X)
         self._X['y']=False
         result=[]
-        fd, self.folder = mkdtemp()
+        self.folder = mkdtemp()
                
         for index, item in self._X.iterrows():
 
