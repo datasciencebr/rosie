@@ -162,52 +162,6 @@ class MealGeneralizationClassifier(TransformerMixin):
     def __applicable_rows(self, X):
         return (X['category'] == 'Meal')
 
-    def __convert_pdf_png(self,item):
-
-        try:
-            #Default arguments to read the file and has a good resolution
-            with Image(filename=item.name, resolution=300) as img:
-                img.compression_quality = 99
-                #Format choosed to convert the pdf to image
-                with img.convert('png') as converted:
-                    f = tempfile.NamedTemporaryFile()
-                    converted.save(filename=f.name)
-                    img = load_img(f.name,False,target_size=(self.img_width,self.img_height))#read a image
-                    f.close()
-                    return img
-        except Exception as ex:
-                print("Error during pdf conversion")
-                print(ex)
-                return None
-
-    def __download_doc(self,url_link):
-            """Download a pdf file to a specified directory
-            Returns the name of the file, e.g., 123123.pdf
-
-            arguments:
-            url -- the pdf url to chamber of deputies web site, e.g., http://www.../documentos/publ/2437/2015/5645177.pdf
-            pdf_directory -- the path to save the file on disk
-
-            Exception -- returns None
-            """
-            #using the doc id as file name
-            try:
-                full_name= url_link.split("/")
-                file_name = full_name[len(full_name)-1]
-                #open the resquest and get the file
-                with urllib.request.urlopen(url_link) as response:
-                    data = response.read()
-                    #write the file on disk
-                    f = tempfile.NamedTemporaryFile(delete=False)
-                    f.write(data)
-                    # return the name of the pdf converted to png
-                    img = self.__convert_pdf_png(f)
-                    os.unlink(f.name)
-                    return img
-            except Exception as ex:
-                print("Error during pdf download")
-                print(ex)
-                return None #case we get some exception we return None
 
     """convert the row of a dataframe to a string represinting the url for the files in the chamber of deputies
         Return a string to access the files in the chamber of deputies web site
@@ -223,3 +177,45 @@ class MealGeneralizationClassifier(TransformerMixin):
             links.append('http://www.camara.gov.br/cota-parlamentar/documentos/publ/{}/{}/{}.pdf'.format(x.applicant_id,x.year, x.document_id))
         X['link']=links
         return X
+
+    """Download a pdf file to a specified directory
+        Returns the name of the file, e.g., 123123.pdf
+
+        arguments:
+        url -- the pdf url to chamber of deputies web site, e.g., http://www.../documentos/publ/2437/2015/5645177.pdf
+        pdf_directory -- the path to save the file on disk
+
+        Exception -- returns None
+    """
+    def __download_doc(self,url_link):
+            #using the doc id as file name
+            try:
+                full_name= url_link.split("/")
+                file_name = full_name[len(full_name)-1]
+                #open the resquest and get the file
+                with urllib.request.urlopen(url_link) as response:
+                    # return the name of the pdf converted to png
+                    img = self.__convert_pdf_png(response)
+                    return img
+            except Exception as ex:
+                print("Error during pdf download")
+                print(ex)
+                return None #case we get some exception we return None
+
+    def __convert_pdf_png(self,response):
+
+        try:
+            #Default arguments to read the file and has a good resolution
+            with Image(file=response, resolution=300) as img:
+                img.compression_quality = 99
+                #Format choosed to convert the pdf to image
+                with img.convert('png') as converted:
+                    png = tempfile.NamedTemporaryFile()
+                    converted.save(filename=png.name)
+                    img = load_img(png.name,False,target_size=(self.img_width,self.img_height))#read a image
+                    png.close()
+                    return img
+        except Exception as ex:
+                print("Error during pdf conversion")
+                print(ex)
+                return None
