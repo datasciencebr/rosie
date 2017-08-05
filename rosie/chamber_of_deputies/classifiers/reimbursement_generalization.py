@@ -205,11 +205,13 @@ class MealGeneralizationClassifier(TransformerMixin):
                 img.compression_quality = 99
                 #Format choosed to convert the pdf to image
                 with img.convert('png') as converted:
+                    print(converted)
                     data = pil_image.open(BytesIO(converted.make_blob()))
                     data = data.convert('RGB')
                     hw_tuple = (self.img_height, self.img_width)
                     if data.size != hw_tuple:
                          data = data.resize(hw_tuple)
+                    print(data)
                     return data
         except Exception as ex:
                 print("Error during pdf conversion")
