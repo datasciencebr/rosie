@@ -1,10 +1,8 @@
 import os
 import unicodedata
-import tempfile
 import numpy as np
 import pandas as pd
 import urllib
-import glob
 from sklearn.base import TransformerMixin
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -13,9 +11,10 @@ from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
-from keras.preprocessing.image import img_to_array, load_img
+from keras.preprocessing.image import img_to_array
 from wand.image import Image
-
+from PIL import Image as pil_image
+from io import BytesIO
 
 class MealGeneralizationClassifier(TransformerMixin):
     """
@@ -178,25 +177,21 @@ class MealGeneralizationClassifier(TransformerMixin):
         X['link']=links
         return X
 
-    """Download a pdf file to a specified directory
-        Returns the name of the file, e.g., 123123.pdf
+    """Download a pdf file and transform it to png
+        Returns the png image using PIL image
 
         arguments:
         url -- the pdf url to chamber of deputies web site, e.g., http://www.../documentos/publ/2437/2015/5645177.pdf
-        pdf_directory -- the path to save the file on disk
 
         Exception -- returns None
     """
     def __download_doc(self,url_link):
             #using the doc id as file name
             try:
-                full_name= url_link.split("/")
-                file_name = full_name[len(full_name)-1]
                 #open the resquest and get the file
                 with urllib.request.urlopen(url_link) as response:
                     # return the name of the pdf converted to png
-                    img = self.__convert_pdf_png(response)
-                    return img
+                    return self.__convert_pdf_png(response)
             except Exception as ex:
                 print("Error during pdf download")
                 print(ex)
@@ -210,11 +205,12 @@ class MealGeneralizationClassifier(TransformerMixin):
                 img.compression_quality = 99
                 #Format choosed to convert the pdf to image
                 with img.convert('png') as converted:
-                    png = tempfile.NamedTemporaryFile()
-                    converted.save(filename=png.name)
-                    img = load_img(png.name,False,target_size=(self.img_width,self.img_height))#read a image
-                    png.close()
-                    return img
+                    data = pil_image.open(BytesIO(converted.make_blob()))
+                    data = data.convert('RGB')
+                    hw_tuple = (self.img_height, self.img_width)
+                    if data.size != hw_tuple:
+                         data = data.resize(hw_tuple)
+                    return data
         except Exception as ex:
                 print("Error during pdf conversion")
                 print(ex)
