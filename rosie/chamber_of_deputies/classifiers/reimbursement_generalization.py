@@ -191,29 +191,20 @@ class MealGeneralizationClassifier(TransformerMixin):
                 #open the resquest and get the file
                 with urllib.request.urlopen(url_link) as response:
                     # return the name of the pdf converted to png
-                    return self.__convert_pdf_png(response)
+                    #Default arguments to read the file and has a good resolution
+                    with Image(file=response, resolution=300) as img:
+                        img.compression_quality = 99
+                        #Format choosed to convert the pdf to image
+                        with img.convert('png') as converted:
+                            print(converted)
+                            data = pil_image.open(BytesIO(converted.make_blob()))
+                            data = data.convert('RGB')
+                            hw_tuple = (self.img_height, self.img_width)
+                            if data.size != hw_tuple:
+                                 data = data.resize(hw_tuple)
+                            print(data)
+                            return data
             except Exception as ex:
                 print("Error during pdf download")
                 print(ex)
                 return None #case we get some exception we return None
-
-    def __convert_pdf_png(self,response):
-
-        try:
-            #Default arguments to read the file and has a good resolution
-            with Image(file=response, resolution=300) as img:
-                img.compression_quality = 99
-                #Format choosed to convert the pdf to image
-                with img.convert('png') as converted:
-                    print(converted)
-                    data = pil_image.open(BytesIO(converted.make_blob()))
-                    data = data.convert('RGB')
-                    hw_tuple = (self.img_height, self.img_width)
-                    if data.size != hw_tuple:
-                         data = data.resize(hw_tuple)
-                    print(data)
-                    return data
-        except Exception as ex:
-                print("Error during pdf conversion")
-                print(ex)
-                return None
