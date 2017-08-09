@@ -2,9 +2,9 @@ dist: trusty
 language: python
 python: 3.6
 cache: pip
-services:
-  - memcached
 install:
+  - "travis_retry sudo apt-get update"
+  - "travis_retry sudo apt-get -qq install libfreetype6-dev liblcms2-dev python-qt4 ghostscript libffi-dev libjpeg-turbo-progs cmake imagemagick"
   - ./setup
   - pip install coveralls
 script:

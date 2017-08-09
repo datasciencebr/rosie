@@ -14,7 +14,8 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from PIL import Image as pil_image
 from sklearn.base import TransformerMixin
 from wand.image import Image
-
+from PIL import Image as pil_image
+from io import BytesIO
 
 class MealGeneralizationClassifier(TransformerMixin):
     """
