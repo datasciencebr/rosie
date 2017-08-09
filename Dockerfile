@@ -16,7 +16,6 @@ COPY setup ./
 COPY rosie.py ./
 COPY rosie ./rosie
 COPY config.ini.example ./
-COPY config.ini ./
 
 RUN ./setup
 
