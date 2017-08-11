@@ -39,7 +39,14 @@ class MealGeneralizationClassifier(TransformerMixin):
 
     COLUMNS = ['applicant_id', 'document_id', 'category', 'year']
 
+    # Dimensions of our images.
     img_width, img_height = 300, 300
+
+
+    # It defines how many iterations will run to find the best model during traaining
+    epochs = 20
+    # It influences the speed of your learning (Execution)
+    batch_size = 15
 
     def train(self, train_data_dir, validation_data_dir, save_dir):
         # Fix random seed for reproducibility
@@ -52,18 +59,10 @@ class MealGeneralizationClassifier(TransformerMixin):
         print('no. of trained samples = ', nb_train_samples,
               ' no. of validation samples= ', nb_validation_samples)
 
-        # Dimensions of our images.
-        img_width, img_height = 300, 300
-
-        # It defines how many iterations will run to find the best model
-        epochs = 20
-        # It influences the speed of your learning (Execution)
-        batch_size = 15
-
         if K.image_data_format() == 'channels_first':
-            input_shape = (3, img_width, img_height)
+            input_shape = (3, self.img_width, self.img_height)
         else:
-            input_shape = (img_width, img_height, 3)
+            input_shape = (self.img_width, self.img_height, 3)
 
         model = Sequential()
         # Its a stack of 3 convolution layers with a ReLU activation followed by max-pooling layers
@@ -93,11 +92,11 @@ class MealGeneralizationClassifier(TransformerMixin):
         # Authour: Yann LeCun in early 1990s.
         # See http://deeplearning.net/tutorial/lenet.html for introduction.
 
+        # This is the augmentation configuration we will use for training
         model.compile(loss='binary_crossentropy',
                       optimizer='rmsprop',
                       metrics=['accuracy'])
 
-        # This is the augmentation configuration we will use for training
         train_datagen = ImageDataGenerator(
             rescale=1. / 255,
             shear_range=0.2,
@@ -110,15 +109,15 @@ class MealGeneralizationClassifier(TransformerMixin):
         # This is the augmentation configuration we will use for testing:
         train_generator = train_datagen.flow_from_directory(
             train_data_dir,
-            target_size=(img_width, img_height),
-            batch_size=batch_size,
+            target_size=(self.img_width, self.img_height),
+            batch_size=self.batch_size,
             class_mode='binary')
 
         # Generates more images for the validation step
         validation_generator = test_datagen.flow_from_directory(
             validation_data_dir,
-            target_size=(img_width, img_height),
-            batch_size=batch_size,
+            target_size=(self.img_width, self.img_height),
+            batch_size=self.batch_size,
             class_mode='binary')
 
         # It allow us to save only the best model between the iterations
@@ -130,10 +129,10 @@ class MealGeneralizationClassifier(TransformerMixin):
         model.fit_generator(
             train_generator,
             callbacks=[checkpointer],
-            steps_per_epoch=nb_train_samples // batch_size,
-            epochs=epochs,
+            steps_per_epoch=nb_train_samples // self.batch_size,
+            epochs=self.epochs,
             validation_data=validation_generator,
-            validation_steps=nb_validation_samples // batch_size)
+            validation_steps=nb_validation_samples // self.batch_size)
 
     def fit(self, X):
         # Load an existent Keras model
@@ -156,7 +155,7 @@ class MealGeneralizationClassifier(TransformerMixin):
 
         for index, item in self._X.iterrows():
             # Download the reimbursements
-            png_image = self.__download_doc(item.link)
+            png_image = self.download_doc(item.link)
             if png_image is not None:
                 x = img_to_array(png_image)
                 x = np.expand_dims(x, axis=0)
@@ -205,7 +204,7 @@ class MealGeneralizationClassifier(TransformerMixin):
 
         Exception -- returns None
     """
-    def __download_doc(self, url_link):
+    def download_doc(self, url_link):
             try:
                 # Open the resquest and get the file
                 response = urlopen(url_link)
