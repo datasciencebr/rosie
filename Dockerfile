@@ -1,4 +1,4 @@
-FROM python:3.5
+FROM python:3.6.2-slim
 
 RUN useradd -ms /bin/bash serenata_de_amor
 WORKDIR /home/serenata_de_amor/rosie
