@@ -28,7 +28,6 @@ class Core:
     def __init__(self, settings, adapter):
         self.settings = settings
         self.dataset = adapter.dataset
-        self.supervised_models = adapter.SUPERVISED_MODEL
         self.data_path = adapter.path
         if self.settings.UNIQUE_IDS:
             self.suspicions = self.dataset[self.settings.UNIQUE_IDS].copy()
@@ -52,9 +51,9 @@ class Core:
         if classifier.__name__ == 'MonthlySubquotaLimitClassifier':
             model = classifier()
             model.fit(self.dataset)
-        elif classifier.__name__ in self.supervised_models:
+        elif classifier.__name__ in  self.settings.SUPERVISED_MODEL:
             model = classifier()
-            model.fit(self.supervised_models[classifier.__name__])
+            model.fit(self.settings.SUPERVISED_MODEL[classifier.__name__])
         else:
             if os.path.isfile(path):
                 model = joblib.load(path)

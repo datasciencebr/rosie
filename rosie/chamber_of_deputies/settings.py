@@ -18,3 +18,6 @@ CLASSIFIERS = {
 }
 
 UNIQUE_IDS = ['applicant_id', 'year', 'document_id']
+
+SUPERVISED_MODEL = {'MealGeneralizationClassifier':
+                    'https://drive.google.com/uc?export=download&id=0B6F2XOmMAf28dUFmUU92MWpxMFU'}

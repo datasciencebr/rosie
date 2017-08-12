@@ -16,9 +16,7 @@ COLUMNS = {
 
 class Adapter:
     COMPANIES_DATASET = '2016-09-03-companies.xz'
-    SUPERVISED_MODEL = {'MealGeneralizationClassifier':
-                        'https://drive.google.com/uc?export=download&id=0B6F2XOmMAf28dUFmUU92MWpxMFU'}
-
+    
     def __init__(self, path):
         self.path = path
 

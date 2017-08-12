@@ -17,7 +17,6 @@ class TestCore(TestCase):
     def setUp(self):
         self.adapter = MagicMock()
         self.adapter.dataset = DATAFRAME
-        self.adapter.SUPERVISED_MODEL = SUPERVISED_MODEL
         self.adapter.path = os.path.join('tmp', 'test')
 
     def test_init_with_unique_ids(self):
@@ -114,10 +113,11 @@ class TestCore(TestCase):
 
         settings = MagicMock()
         settings.UNIQUE_IDS = ['number']
+        settings.SUPERVISED_MODEL = SUPERVISED_MODEL
         core = Core(settings, self.adapter)
         core.load_trained_model(ClassifierClass)
 
-        classifier_instance.fit.assert_called_once_with(core.supervised_models['MealGeneralizationClassifier'])
+        classifier_instance.fit.assert_called_once_with(settings.SUPERVISED_MODEL['MealGeneralizationClassifier'])
 
     def test_predict(self):
         model = MagicMock()
