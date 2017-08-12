@@ -1,6 +1,7 @@
-FROM python:3.5
+FROM python:3.6.2-slim
 
-USER root
+RUN useradd -ms /bin/bash serenata_de_amor
+WORKDIR /home/serenata_de_amor/rosie
 
 RUN apt-get update && apt-get install -y \
   build-essential \
@@ -8,16 +9,14 @@ RUN apt-get update && apt-get install -y \
   libxslt1-dev \
   python3-dev \
   unzip \
-  zlib1g-dev
-  
+  zlib1g-dev \
+  && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --upgrade pip
 
+COPY config.ini.example ./
 COPY requirements.txt ./
 COPY setup ./
-COPY rosie.py ./
-COPY rosie ./rosie
-COPY config.ini.example ./
-
 RUN ./setup
 
-CMD python rosie.py run
+USER serenata_de_amor
