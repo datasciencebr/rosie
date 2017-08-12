@@ -8,6 +8,8 @@ import pandas as pd
 from rosie.core import Core
 
 DATAFRAME = pd.DataFrame({'number': (1, 2), 'text': ('one', 'two')})
+SUPERVISED_MODEL = {'MealGeneralizationClassifier':
+                    'https://drive.google.com/uc?export=download&id=0B6F2XOmMAf28dUFmUU92MWpxMFU'}
 
 
 class TestCore(TestCase):
@@ -15,6 +17,7 @@ class TestCore(TestCase):
     def setUp(self):
         self.adapter = MagicMock()
         self.adapter.dataset = DATAFRAME
+        self.adapter.SUPERVISED_MODEL = SUPERVISED_MODEL
         self.adapter.path = os.path.join('tmp', 'test')
 
     def test_init_with_unique_ids(self):
@@ -103,6 +106,18 @@ class TestCore(TestCase):
         core.load_trained_model(ClassifierClass)
 
         classifier_instance.fit.assert_called_once_with(core.dataset)
+
+    def test_load_trained_model_for_meal_generalization(self):
+        ClassifierClass, classifier_instance = MagicMock(), MagicMock()
+        ClassifierClass.return_value = classifier_instance
+        ClassifierClass.__name__ = 'MealGeneralizationClassifier'
+
+        settings = MagicMock()
+        settings.UNIQUE_IDS = ['number']
+        core = Core(settings, self.adapter)
+        core.load_trained_model(ClassifierClass)
+
+        classifier_instance.fit.assert_called_once_with(core.supervised_models['MealGeneralizationClassifier'])
 
     def test_predict(self):
         model = MagicMock()

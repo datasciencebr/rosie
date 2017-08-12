@@ -1,5 +1,7 @@
 import os
 import unicodedata
+import tempfile
+import shutil
 from io import BytesIO
 from urllib.request import urlopen
 
@@ -136,7 +138,16 @@ class MealGeneralizationClassifier(TransformerMixin):
 
     def fit(self, X):
         # Load an existent Keras model
-        self.keras_model = load_model(X)
+        if (not os.path.isfile(X) and  (isinstance(X, str) and ( 'https' in X or 'http' in X))):
+            response = urlopen(X)
+            with open('weights.hdf5', 'wb') as fp:
+                shutil.copyfileobj(response, fp)
+                X = fp.name
+                self.keras_model = load_model(X)
+                os.unlink(fp.name)
+        else:
+            self.keras_model = load_model(X)
+
         return self
 
     def transform(self, X=None):
