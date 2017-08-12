@@ -16,7 +16,7 @@ COLUMNS = {
 
 class Adapter:
     COMPANIES_DATASET = '2016-09-03-companies.xz'
-
+    
     def __init__(self, path):
         self.path = path
 
