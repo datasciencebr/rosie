@@ -117,7 +117,8 @@ class TestCore(TestCase):
         core = Core(settings, self.adapter)
         core.load_trained_model(ClassifierClass)
 
-        classifier_instance.fit.assert_called_once_with(settings.SUPERVISED_MODEL['MealGeneralizationClassifier'])
+        classifier_instance.fit.assert_called_once_with(
+            settings.SUPERVISED_MODEL['MealGeneralizationClassifier'])
 
     def test_predict(self):
         model = MagicMock()

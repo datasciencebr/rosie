@@ -46,12 +46,12 @@ class Core:
     def load_trained_model(self, classifier):
         filename = '{}.pkl'.format(classifier.__name__.lower())
         path = os.path.join(self.data_path, filename)
-
+        keys = self.settings.SUPERVISED_MODEL
         # palliative: this outputs a model too large for joblib
         if classifier.__name__ == 'MonthlySubquotaLimitClassifier':
             model = classifier()
             model.fit(self.dataset)
-        elif classifier.__name__ in  self.settings.SUPERVISED_MODEL:
+        elif (keys is not None and classifier.__name__ in keys):
             model = classifier()
             model.fit(self.settings.SUPERVISED_MODEL[classifier.__name__])
         else:

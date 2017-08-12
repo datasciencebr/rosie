@@ -1,6 +1,5 @@
 import os
 import unicodedata
-import tempfile
 import shutil
 from io import BytesIO
 from urllib.request import urlopen
@@ -16,8 +15,7 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from PIL import Image as pil_image
 from sklearn.base import TransformerMixin
 from wand.image import Image
-from PIL import Image as pil_image
-from io import BytesIO
+
 
 class MealGeneralizationClassifier(TransformerMixin):
     """
@@ -43,7 +41,6 @@ class MealGeneralizationClassifier(TransformerMixin):
 
     # Dimensions of our images.
     img_width, img_height = 300, 300
-
 
     # It defines how many iterations will run to find the best model during traaining
     epochs = 20
@@ -93,6 +90,7 @@ class MealGeneralizationClassifier(TransformerMixin):
         # Inspired by biological visual cortex and tailored for computer vision tasks.
         # Authour: Yann LeCun in early 1990s.
         # See http://deeplearning.net/tutorial/lenet.html for introduction.
+        # Or this simplified version: https://www.youtube.com/watch?v=JiN9p5vWHDY
 
         # This is the augmentation configuration we will use for training
         model.compile(loss='binary_crossentropy',
@@ -124,7 +122,7 @@ class MealGeneralizationClassifier(TransformerMixin):
 
         # It allow us to save only the best model between the iterations
         checkpointer = ModelCheckpoint(
-            filepath=os.path.join(save_dir,"weights.hdf5"),
+            filepath=os.path.join(save_dir, "weights.hdf5"),
             verbose=1, save_best_only=True)
 
         # We set it as a parameter to save only the best model
@@ -138,7 +136,7 @@ class MealGeneralizationClassifier(TransformerMixin):
 
     def fit(self, X):
         # Load an existent Keras model
-        if (not os.path.isfile(X) and  (isinstance(X, str) and ( 'https' in X or 'http' in X))):
+        if (not os.path.isfile(X) and (isinstance(X, str) and ('https' in X or 'http' in X))):
             response = urlopen(X)
             with open('weights.hdf5', 'wb') as fp:
                 shutil.copyfileobj(response, fp)
@@ -174,13 +172,13 @@ class MealGeneralizationClassifier(TransformerMixin):
                 preds = self.keras_model.predict_classes(x, verbose=0)
                 # Get the probability of prediciton
                 prob = self.keras_model.predict_proba(x, verbose=0)
-                # Keep the predictions with more than 80% of accuracy and the class 1 (suspicious)
+                # Keep the predictions = (suspicious)
                 if(prob >= 0.8 and preds == 1):
                     result.append(True)
                 else:
                     result.append(False)
             else:
-                # Case the reimbursement can not be downloaded or convert it is classified as False
+                # Case the reimbursement can not be convereted to png
                 result.append(False)
 
         self._X['y'] = result
@@ -189,7 +187,8 @@ class MealGeneralizationClassifier(TransformerMixin):
     def __applicable_rows(self, X):
         return (X['category'] == 'Meal')
 
-    """ Creates a new column 'links' containing an url for the files in the chamber of deputies website
+    """ Creates a new column 'links' containing an url
+        for the files in the chamber of deputies website
             Return updated Dataframe
 
         arguments:
