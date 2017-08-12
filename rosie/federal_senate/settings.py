@@ -5,3 +5,5 @@ CLASSIFIERS = {
 }
 
 UNIQUE_IDS = None
+
+SUPERVISED_MODEL = None
