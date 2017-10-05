@@ -44,7 +44,7 @@ class MonthlySubquotaLimitClassifier(TransformerMixin):
             {
                 # Automotive vehicle renting or charter
                 'data': self._X.query('(subquota_number == "120") & (reimbursement_month >= datetime(2015, 4, 1))'),
-                'monthly_limit': 1090000,
+                'monthly_limit': 1271300,
             },
             {
                 # Taxi, toll and parking
