@@ -10,10 +10,9 @@ def entered_command(argv):
 def help():
     message = (
         'Usage:',
-        '  python rosie.py run chamber_of_deputies [<path to output directory>]',
+        '  python rosie.py run (chamber_of_deputies | federal_senate) [<path to output directory>] [--years 2017,2016]',
         'Testing:',
-        '  python rosie.py test',
-        '  python rosie.py test chamber_of_deputies',
+        '  python rosie.py test [chamber_of_deputies | federal_senate]',
     )
     print('\n'.join(message))
 
@@ -31,7 +30,12 @@ def run():
         exit(1)
     target_directory = argv[3] if len(argv) >= 4 else '/tmp/serenata-data/'
     klass = getattr(rosie, target_module)
-    klass.main(target_directory)
+    if '--years' in argv:
+        years = argv[argv.index('--years') + 1]
+        years = [int(num) for num in years.split(',')]
+        klass.main(target_directory, years=years)
+    else:
+        klass.main(target_directory)
 
 
 def test():
